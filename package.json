@@ -1,0 +1,16 @@
+{
+  "name": "euromillions",
+  "version": "1.0.0",
+  "description": "load euromillions to neo4j",
+  "main": "loadEuromillionsData.js",
+  "scripts": {
+    "load": "node loadEuromillionsData",
+    "load2": "node loadEuromillionsData2",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Frederik Byl",
+  "license": "ISC",
+  "dependencies": {
+    "neo4j-driver": "^4.1.1"
+  }
+}

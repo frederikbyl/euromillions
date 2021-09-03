@@ -1,0 +1,16 @@
+curl 'https://www.e-lotto.be/CallBroker.ashx' \
+  -H 'Connection: keep-alive' \
+  -H 'Pragma: no-cache' \
+  -H 'Cache-Control: no-cache' \
+  -H 'Accept: application/json, text/plain, */*' \
+  -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.83 Safari/537.36' \
+  -H 'Content-Type: application/json;charset=UTF-8' \
+  -H 'Origin: https://www.e-lotto.be' \
+  -H 'Sec-Fetch-Site: same-origin' \
+  -H 'Sec-Fetch-Mode: cors' \
+  -H 'Sec-Fetch-Dest: empty' \
+  -H 'Referer: https://www.e-lotto.be/NL/drawGames/euromillions/results/result/history-of-results' \
+  -H 'Accept-Language: nl-NL,nl;q=0.9,en-US;q=0.8,en;q=0.7,fr;q=0.6' \
+  -H 'Cookie: _ga=GA1.2.1405670286.1525428189; _gcl_au=1.1.237397769.1594279733; fpcid=8408766541235509523_FP; ASP.NET_SessionId=fzknvi45z3ealafjswfntw3r; AMCVS_EC68A4075746D06E7F000101%40AdobeOrg=1; s_cc=true; PreferedLanguage=NL; _gid=GA1.2.427210678.1598976522; X-Mapping-pokmccfb=2C346FF8E7468C53E3D22ABDCB82CF43; WARPSESSION=788a7c7a98434aa298747faedeb832aa; AMCV_EC68A4075746D06E7F000101%40AdobeOrg=1585540135%7CMCIDTS%7C18507%7CMCMID%7C18704251474649848354247986490454612699%7CMCAAMLH-1599648185%7C6%7CMCAAMB-1599648185%7CRKhpRz8krg2tLO6pguXWp5olkAcUniQYPHaMWWgdJ3xzPWQmdj0y%7CMCOPTOUT-1599050585s%7CNONE%7CMCAID%7CNONE%7CMCSYNCSOP%7C411-17789%7CvVersion%7C4.4.0%7CMCCIDH%7C1609076781; s_sq=%5B%5BB%5D%5D; s_ppn=%2Fdrawgames%2Feuromillions%2Fresults%2Fresult%2Fhistory-of-results; s_ppvl=%2Fdrawgames%2Feuromillions%2Fresults%2Fresult%2Flast%2C47%2C39%2C1142%2C1680%2C948%2C1680%2C1050%2C2%2CP; s_ppv=%2Fdrawgames%2Feuromillions%2Fresults%2Fresult%2Fhistory-of-results%2C100%2C78%2C2357%2C1680%2C688%2C1680%2C1050%2C2%2CP' \
+  --data-binary '[{"serviceName":"DrawHistoryService","methodName":"GetDrawHistory","arguments":{"externalID":"Elot","fromDate":"Tue Mar 07 2006","toDate":"Fri Mar 12 2021","page":1,"pageSize":"9000","IDMDLanguage":"NL"}}]' \
+  --compressed
