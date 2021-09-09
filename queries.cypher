@@ -119,3 +119,99 @@ with max(t2.value) as currentMax,n,t
 match (t3:Trekking)--(n)
 where t3.value = currentMax
 merge (t)<-[:NEXT{value:t.value-t3.value}]-(t3)
+
+
+
+--get latest trekking that number was chosen
+match (t:Trekking {value:1374}) 
+with t
+match (n:Number)
+with t,n
+match (t2:Trekking)--(n)
+where t2.value <t.value
+return t.value, n.value, t.value-max(t2.value)+1
+
+
+--get prediction for each number based on number of times delta happened in the past:
+match (t:Trekking {value:1374}) 
+with t
+match (n:Number)
+with t,n
+match (t2:Trekking)--(n)
+where t2.value <t.value
+with t.value as trekking, n.value as number, t.value-max(t2.value)+1 as latest
+match (:Number{value:number})--(t3:Trekking)
+with trekking, number,  latest, count( t3) as total
+match (:Number{value:number})--(t4:Trekking)-[r]-(t5:Trekking)--(:Number{value:number})
+where r.value = latest and t4.value<t5.value
+and t5.value < t.value
+return trekking, number, latest, count(t4), total, count(t4)/toFloat(total) order by number
+
+--merge prediction for a trekking
+match (t:Trekking {value:1374}) 
+with t
+match (n:Number)
+with t,n
+match (t2:Trekking)--(n)
+where t2.value <t.value
+with t, n, t.value-max(t2.value)+1 as latest
+match (n)--(t3:Trekking)
+where t3.value < t.value
+with t, n,  latest, count( t3) as total
+match (n)--(t4:Trekking)-[r]-(t5:Trekking)--(n)
+where r.value = latest and t4.value<t5.value
+and t5.value < t.value
+with t, n, latest, total, count(t4)/toFloat(total) as prediction
+MERGE (t6:Trekking {value:t.value+1})
+MERGE (t)-[:NEXT]->(t6)
+MERGE (t6)-[:PREDICTION {value:prediction}]-(n) 
+
+CALL apoc.periodic.iterate('match (t:Trekking) where t.value >1000 return t','
+match (n:Number)
+with t,n
+match (t2:Trekking)--(n)
+where t2.value <t.value
+with t, n, t.value-max(t2.value)+1 as latest
+match (n)--(t3:Trekking)
+where t3.value < t.value
+with t, n,  latest, count( t3) as total
+match (n)--(t4:Trekking)-[r]-(t5:Trekking)--(n)
+where r.value = latest and t4.value<t5.value
+and t5.value < t.value
+with t, n, latest, total, count(t4)/toFloat(total) as prediction
+MERGE (t6:Trekking {value:t.value+1})
+MERGE (t)-[:NEXT]->(t6)
+MERGE (t6)-[:PREDICTION {value:prediction}]-(n)',
+{batchSize:1, iterateList:false}) 
+
+
+-- hoeveel van de getrokken, zijn nu best prediction
+match (t:Trekking)-[p:PREDICTION]-()
+with t, max (p.value) as best
+match (y:Number)-[p1:PREDICTION]-(t)-[:DRAWN]-(y)
+where p1.value = best
+return t.value, y.value, p1.value order by t.value
+
+--best of 5
+match (t:Trekking)-[p:PREDICTION]-()
+with t, max (p.value) as best
+match (y:Number)-[p1:PREDICTION]-(t)-[:DRAWN]-(y)
+where p1.value = best
+return t.value, y.value, p1.value order by t.value
+
+
+
+
+match (t:Trekking)-[p:PREDICTION]-(n:Number) 
+with t, n, max (p.value) as best
+match (n)-[p1:PREDICTION]-(t)-[:DRAWN]-(n)
+where p1.value = best
+return t.value, n.value, p1.value order by t.value
+
+match (t:Trekking)-[p:PREDICTION]-(n:Number) 
+return t, n, max (p.value) as best
+match (y:Number)-[p1:PREDICTION]-(t)-[:DRAWN]-(y)
+where p1.value = best
+return t.value, y.value, p1.value order by t.value
+
+match (t:Trekking {value:1376} )-[r]-(n:Number) return t.value,n.value,collect(type(r)), collect (r.value)
