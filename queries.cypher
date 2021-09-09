@@ -194,11 +194,26 @@ return t.value, y.value, p1.value order by t.value
 
 --best of 5
 match (t:Trekking)-[p:PREDICTION]-()
-with t, max (p.value) as best
+with t, p.value as predictions order by predictions desc
+with t, collect (predictions) as best
 match (y:Number)-[p1:PREDICTION]-(t)-[:DRAWN]-(y)
-where p1.value = best
+where p1.value in best[0..5]
 return t.value, y.value, p1.value order by t.value
 
+-- overview
+match (n:Number)-[:DRAWN]-(t:Trekking)-[p:PREDICTION]-(n)
+return t.value, n.value, p.value order by t.value desc
+
+
+--is there a trekking that resembles very much at another trekking? calculate similarity based on predictions
+match (t1:Trekking {value:1021} )-[p:PREDICTION]-(n:Number)
+with t1, p.value as prediction1 order by prediction1
+with t1, collect (prediction1) as vector1
+with t1, vector1
+match (t2:Trekking {value:1304})-[p2:PREDICTION]-(n2:Number)
+with t1, vector1, t2, p2.value as prediction2
+with t1, vector1,  t2.value as t2, collect (prediction2) as vector2
+return t1.value, t2,  gds.alpha.similarity.cosine(vector1, vector2) AS similarity
 
 
 
@@ -215,3 +230,13 @@ where p1.value = best
 return t.value, y.value, p1.value order by t.value
 
 match (t:Trekking {value:1376} )-[r]-(n:Number) return t.value,n.value,collect(type(r)), collect (r.value)
+
+--cosine similarity
+match (t1:Trekking {value:1021} )-[p:PREDICTION]-(n:Number)
+with t1, p.value as prediction1 order by prediction1
+with t1, collect (prediction1) as vector1
+with t1, vector1
+match (t2:Trekking {value:1304})-[p2:PREDICTION]-(n2:Number)
+with t1, vector1, t2, p2.value as prediction2
+with t1, vector1,  t2.value as t2, collect (prediction2) as vector2
+return t1.value, t2,  gds.alpha.similarity.cosine(vector1, vector2) AS similarity
